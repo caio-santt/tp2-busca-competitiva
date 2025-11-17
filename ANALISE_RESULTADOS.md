@@ -64,4 +64,3 @@
 2. **Aumentar número de jogos** para Experiment 2 (especialmente profundidades 4 e 5) para ter mais confiança estatística
 3. **Documentar** que os tempos podem exceder o limite devido à natureza do algoritmo (não pode ser interrompido no meio de uma iteração)
 4. **Considerar testes manuais** para validar que a IA está jogando corretamente
-

@@ -105,4 +105,3 @@ Desenvolvido como parte do TP2 da disciplina de Inteligência Artificial.
 ---
 
 **Status**: Em desenvolvimento 🚧
-

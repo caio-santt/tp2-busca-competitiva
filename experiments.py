@@ -320,8 +320,8 @@ def experiment_1_minimax_vs_random():
     print("="*60)
     
     results = {}
-    # Reduzir número de jogos e ajustar profundidades para evitar timeouts
-    num_games_map = {2: 15, 3: 10, 4: 8, 5: 5}  # Menos jogos para profundidades maiores
+    # Aumentar número de jogos para melhor confiança estatística
+    num_games_map = {2: 20, 3: 15, 4: 10, 5: 8}  # Mais jogos para melhor estatística
     
     for depth in [2, 3, 4, 5]:
         config_minimax = {'max_depth': depth, 'max_time_ms': 3000}  # Timeout mais rígido
@@ -346,7 +346,7 @@ def experiment_2_alphabeta_vs_minimax():
     print("="*60)
     
     results = {}
-    num_games_map = {2: 8, 3: 5, 4: 3, 5: 2}  # Menos jogos para profundidades maiores
+    num_games_map = {2: 15, 3: 10, 4: 8, 5: 6}  # Mais jogos para melhor comparação
     
     for depth in [2, 3, 4, 5]:
         config = {'max_depth': depth, 'max_time_ms': 3000}

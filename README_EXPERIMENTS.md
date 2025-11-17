@@ -44,4 +44,3 @@ python server.py
 - Os experimentos podem demorar alguns minutos para completar
 - Ajuste `num_games` no script se quiser mais/fewer partidas por experimento
 - Para experimentos mais rápidos, reduza o número de jogos ou profundidades
-

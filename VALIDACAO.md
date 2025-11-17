@@ -193,4 +193,3 @@ cat experiment_results.json
 3. **Formato AAAI** - usar template correto
 4. **Máximo 5 páginas** - ser conciso
 5. **Prazo**: 16 Nov 2025, 23:59
-

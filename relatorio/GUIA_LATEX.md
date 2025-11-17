@@ -227,4 +227,3 @@ sudo apt-get install texlive-latex-extra
 - [ ] Testar compilação
 - [ ] Configurar extensão (opcional)
 - [ ] Começar a escrever relatório
-

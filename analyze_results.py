@@ -97,4 +97,3 @@ print("OK" if ab_better else "PROBLEMA - Alpha-Beta está visitando mais nós!")
 
 print("\n✓ Experiment 3: Iterative Deepening vs Alpha-Beta")
 print("  - ID deveria ter desempenho similar ou melhor que AB: OK" if results['experiment_3']['1000']['player1_wins'] >= results['experiment_3']['1000']['player2_wins'] else "  - PROBLEMA: ID não está performando bem")
-
