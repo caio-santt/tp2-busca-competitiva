@@ -12,7 +12,6 @@ ROWS, COLS = 6, 7
 
 AI_PLAYERS = {
     "AI_Minimax": search.choose_move,  # Nossa implementação completa (Minimax + Alfa-Beta + ID)
-    "AI_Random": search.choose_move,  # Mantido para compatibilidade
     "AI_Dummy": search.choose_move_infinity  # Loop infinito (para testar timeout)
 }
 
