@@ -12,7 +12,7 @@ from search import (
 )
 
 def play_game(player1_func, player2_func, config1: Dict, config2: Dict, 
-              max_moves: int = 42) -> Tuple[int, Dict]:
+              max_moves: int = 42, timeout_per_move: float = 10.0) -> Tuple[int, Dict]:
     """
     Executa uma partida completa entre dois jogadores.
     
@@ -35,21 +35,32 @@ def play_game(player1_func, player2_func, config1: Dict, config2: Dict,
         if is_term:
             return winner_player, stats
         
-        # Escolher jogada
+        # Escolher jogada com timeout
         start_time = time.time()
         global _last_stats
-        if turn == P1:
-            col = player1_func(board, turn, config1)
-            elapsed = (time.time() - start_time) * 1000
-            stats['player1_time'].append(elapsed)
-            if 'nodes_visited' in _last_stats:
-                stats['player1_nodes'].append(_last_stats['nodes_visited'])
-        else:
-            col = player2_func(board, turn, config2)
-            elapsed = (time.time() - start_time) * 1000
-            stats['player2_time'].append(elapsed)
-            if 'nodes_visited' in _last_stats:
-                stats['player2_nodes'].append(_last_stats['nodes_visited'])
+        col = 0
+        try:
+            if turn == P1:
+                col = player1_func(board, turn, config1)
+                elapsed = (time.time() - start_time) * 1000
+                if elapsed > timeout_per_move * 1000:
+                    print(f"  AVISO: Jogada do P1 demorou {elapsed:.0f}ms (timeout: {timeout_per_move*1000:.0f}ms)")
+                stats['player1_time'].append(elapsed)
+                if 'nodes_visited' in _last_stats:
+                    stats['player1_nodes'].append(_last_stats['nodes_visited'])
+            else:
+                col = player2_func(board, turn, config2)
+                elapsed = (time.time() - start_time) * 1000
+                if elapsed > timeout_per_move * 1000:
+                    print(f"  AVISO: Jogada do P2 demorou {elapsed:.0f}ms (timeout: {timeout_per_move*1000:.0f}ms)")
+                stats['player2_time'].append(elapsed)
+                if 'nodes_visited' in _last_stats:
+                    stats['player2_nodes'].append(_last_stats['nodes_visited'])
+        except Exception as e:
+            print(f"  ERRO na jogada: {e}")
+            # Em caso de erro, escolher primeira jogada válida
+            legal = valid_moves(board)
+            col = legal[0] if legal else 0
         
         # Aplicar jogada
         new_board = make_move(board, col, turn)
@@ -237,17 +248,22 @@ def run_experiment(name: str, player1_func, player2_func,
     
     for game_num in range(1, num_games + 1):
         print(f"Jogo {game_num}/{num_games}...", end=" ", flush=True)
+        game_start = time.time()
         
         # Alternar quem começa
         if game_num % 2 == 1:
-            winner, stats = play_game(player1_func, player2_func, config1, config2)
+            winner, stats = play_game(player1_func, player2_func, config1, config2, timeout_per_move=15.0)
         else:
-            winner, stats = play_game(player2_func, player1_func, config2, config1)
+            winner, stats = play_game(player2_func, player1_func, config2, config1, timeout_per_move=15.0)
             # Inverter resultado
             if winner == P1:
                 winner = P2
             elif winner == P2:
                 winner = P1
+        
+        game_time = time.time() - game_start
+        if game_time > 60:  # Se o jogo demorou mais de 1 minuto
+            print(f" (demorou {game_time:.1f}s)", end="")
         
         if winner == P1:
             results['player1_wins'] += 1
@@ -292,8 +308,11 @@ def experiment_1_minimax_vs_random():
     print("="*60)
     
     results = {}
+    # Reduzir número de jogos e ajustar profundidades para evitar timeouts
+    num_games_map = {2: 15, 3: 10, 4: 8, 5: 5}  # Menos jogos para profundidades maiores
+    
     for depth in [2, 3, 4, 5]:
-        config_minimax = {'max_depth': depth, 'max_time_ms': 5000}
+        config_minimax = {'max_depth': depth, 'max_time_ms': 3000}  # Timeout mais rígido
         config_random = {}
         
         result = run_experiment(
@@ -302,7 +321,7 @@ def experiment_1_minimax_vs_random():
             random_player,
             config_minimax,
             config_random,
-            num_games=20
+            num_games=num_games_map[depth]
         )
         results[depth] = result
     
@@ -315,8 +334,10 @@ def experiment_2_alphabeta_vs_minimax():
     print("="*60)
     
     results = {}
+    num_games_map = {2: 8, 3: 5, 4: 3, 5: 2}  # Menos jogos para profundidades maiores
+    
     for depth in [2, 3, 4, 5]:
-        config = {'max_depth': depth, 'max_time_ms': 5000}
+        config = {'max_depth': depth, 'max_time_ms': 3000}
         
         result = run_experiment(
             f"Alfa-Beta (depth={depth}) vs Minimax (depth={depth})",
@@ -324,7 +345,7 @@ def experiment_2_alphabeta_vs_minimax():
             minimax_player,  # Minimax sem poda
             config,
             config,
-            num_games=10
+            num_games=num_games_map[depth]
         )
         results[depth] = result
     
@@ -339,15 +360,15 @@ def experiment_3_iterative_vs_alphabeta():
     results = {}
     for time_limit_ms in [1000, 2000]:
         config_id = {'max_depth': 10, 'max_time_ms': time_limit_ms}  # ID com limite de tempo
-        config_ab = {'max_depth': 5, 'max_time_ms': time_limit_ms}  # AB fixo (profundidade 5)
+        config_ab = {'max_depth': 4, 'max_time_ms': time_limit_ms}  # AB fixo (profundidade 4, reduzida)
         
         result = run_experiment(
-            f"Iterative Deepening ({time_limit_ms}ms) vs Alfa-Beta fixo depth=5 ({time_limit_ms}ms)",
+            f"Iterative Deepening ({time_limit_ms}ms) vs Alfa-Beta fixo depth=4 ({time_limit_ms}ms)",
             iterative_deepening_player,  # Usa Iterative Deepening
             alphabeta_player,  # Alfa-Beta com profundidade fixa
             config_id,
             config_ab,
-            num_games=10
+            num_games=8  # Reduzido para acelerar
         )
         results[time_limit_ms] = result
     
@@ -379,4 +400,3 @@ if __name__ == "__main__":
         json.dump(all_results, f, indent=2)
     
     print("\nResultados salvos em 'experiment_results.json'")
-
