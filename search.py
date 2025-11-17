@@ -73,6 +73,78 @@ def other(player: int) -> int:
 # -----------------------------------------------------------------------------
 # ÚNICO PONTO A SER IMPLEMENTADO PELOS ALUNOS
 # -----------------------------------------------------------------------------
+
+def evaluate(board: List[List[int]], player: int) -> float:
+    """
+    Avalia o tabuleiro do ponto de vista do jogador.
+    Retorna um valor positivo se a posição é favorável ao jogador.
+    
+    Componentes da heurística:
+    1. Valorização do centro (colunas centrais são mais valiosas)
+    2. Contagem de sequências (duplas e triplas)
+    """
+    opponent = other(player)
+    score = 0.0
+    
+    # 1. Valorização do centro
+    # Colunas centrais (2, 3, 4) são mais valiosas
+    center_cols = [2, 3, 4]
+    for c in center_cols:
+        for r in range(ROWS):
+            if board[r][c] == player:
+                # Quanto mais central, mais pontos
+                if c == 3:  # Coluna central
+                    score += 3.0
+                else:  # Colunas 2 e 4
+                    score += 2.0
+            elif board[r][c] == opponent:
+                # Penalizar peças do oponente no centro
+                if c == 3:
+                    score -= 3.0
+                else:
+                    score -= 2.0
+    
+    # 2. Contagem de sequências
+    # Contar sequências de 2 e 3 peças do jogador
+    def count_sequences(length: int, p: int) -> int:
+        """Conta sequências de 'length' peças do jogador p."""
+        count = 0
+        # Horizontais
+        for r in range(ROWS):
+            for c in range(COLS - length + 1):
+                seq = [board[r][c+i] for i in range(length)]
+                if seq.count(p) == length and seq.count(EMPTY) == 0:
+                    count += 1
+        # Verticais
+        for c in range(COLS):
+            for r in range(ROWS - length + 1):
+                seq = [board[r+i][c] for i in range(length)]
+                if seq.count(p) == length and seq.count(EMPTY) == 0:
+                    count += 1
+        # Diagonais ↘
+        for r in range(ROWS - length + 1):
+            for c in range(COLS - length + 1):
+                seq = [board[r+i][c+i] for i in range(length)]
+                if seq.count(p) == length and seq.count(EMPTY) == 0:
+                    count += 1
+        # Diagonais ↗
+        for r in range(length - 1, ROWS):
+            for c in range(COLS - length + 1):
+                seq = [board[r-i][c+i] for i in range(length)]
+                if seq.count(p) == length and seq.count(EMPTY) == 0:
+                    count += 1
+        return count
+    
+    # Sequências de 2 peças: peso 1
+    score += count_sequences(2, player) * 1.0
+    score -= count_sequences(2, opponent) * 1.0
+    
+    # Sequências de 3 peças: peso 10 (muito mais importante)
+    score += count_sequences(3, player) * 10.0
+    score -= count_sequences(3, opponent) * 10.0
+    
+    return score
+
 def choose_move(board: List[List[int]], turn: int, config: Dict) -> Tuple[int, Dict]:
     """
     Decide a coluna (0..6) para jogar agora.
