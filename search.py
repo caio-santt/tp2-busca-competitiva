@@ -74,6 +74,85 @@ def other(player: int) -> int:
 # ÚNICO PONTO A SER IMPLEMENTADO PELOS ALUNOS
 # -----------------------------------------------------------------------------
 
+def is_accessible(board: List[List[int]], row: int, col: int) -> bool:
+    """
+    Verifica se uma posição está acessível (pode receber uma peça por gravidade).
+    Uma posição está acessível se está na linha mais baixa ou se há uma peça abaixo dela.
+    """
+    # Se está na última linha, sempre acessível
+    if row == ROWS - 1:
+        return True
+    # Se há uma peça abaixo, está acessível
+    return board[row + 1][col] != EMPTY
+
+def count_threats(board: List[List[int]], player: int) -> int:
+    """
+    Conta ameaças: sequências de 3 peças do jogador que podem virar 4.
+    A ameaça só conta se o espaço vazio estiver acessível (gravidade).
+    """
+    count = 0
+    opponent = other(player)
+    
+    # Padrões de ameaça: 3 peças do jogador + 1 espaço vazio acessível
+    patterns = [
+        [player, player, player, EMPTY],  # [X, X, X, _]
+        [player, player, EMPTY, player],  # [X, X, _, X]
+        [player, EMPTY, player, player],  # [X, _, X, X]
+        [EMPTY, player, player, player],  # [_, X, X, X]
+    ]
+    
+    def check_pattern(seq: List[int], positions: List[Tuple[int, int]], pattern: List[int]) -> bool:
+        """Verifica se a sequência corresponde ao padrão e se o espaço vazio está acessível."""
+        if seq != pattern:
+            return False
+        # Encontrar a posição do espaço vazio
+        empty_idx = pattern.index(EMPTY)
+        empty_pos = positions[empty_idx]
+        # Verificar se está acessível
+        return is_accessible(board, empty_pos[0], empty_pos[1])
+    
+    # Horizontais
+    for r in range(ROWS):
+        for c in range(COLS - 3):
+            seq = [board[r][c+i] for i in range(4)]
+            positions = [(r, c+i) for i in range(4)]
+            for pattern in patterns:
+                if check_pattern(seq, positions, pattern):
+                    count += 1
+                    break
+    
+    # Verticais (só precisa verificar se o espaço vazio está acessível)
+    for c in range(COLS):
+        for r in range(ROWS - 3):
+            seq = [board[r+i][c] for i in range(4)]
+            positions = [(r+i, c) for i in range(4)]
+            for pattern in patterns:
+                if check_pattern(seq, positions, pattern):
+                    count += 1
+                    break
+    
+    # Diagonais ↘
+    for r in range(ROWS - 3):
+        for c in range(COLS - 3):
+            seq = [board[r+i][c+i] for i in range(4)]
+            positions = [(r+i, c+i) for i in range(4)]
+            for pattern in patterns:
+                if check_pattern(seq, positions, pattern):
+                    count += 1
+                    break
+    
+    # Diagonais ↗
+    for r in range(3, ROWS):
+        for c in range(COLS - 3):
+            seq = [board[r-i][c+i] for i in range(4)]
+            positions = [(r-i, c+i) for i in range(4)]
+            for pattern in patterns:
+                if check_pattern(seq, positions, pattern):
+                    count += 1
+                    break
+    
+    return count
+
 def evaluate(board: List[List[int]], player: int) -> float:
     """
     Avalia o tabuleiro do ponto de vista do jogador.
@@ -82,6 +161,7 @@ def evaluate(board: List[List[int]], player: int) -> float:
     Componentes da heurística:
     1. Valorização do centro (colunas centrais são mais valiosas)
     2. Contagem de sequências (duplas e triplas)
+    3. Detecção de ameaças (3 em linha que podem virar 4)
     """
     opponent = other(player)
     score = 0.0
@@ -142,6 +222,15 @@ def evaluate(board: List[List[int]], player: int) -> float:
     # Sequências de 3 peças: peso 10 (muito mais importante)
     score += count_sequences(3, player) * 10.0
     score -= count_sequences(3, opponent) * 10.0
+    
+    # 3. Detecção de ameaças (3 em linha que podem virar 4)
+    # Ameaças próprias: peso muito alto (500) - oportunidade de vitória
+    my_threats = count_threats(board, player)
+    score += my_threats * 500.0
+    
+    # Ameaças do oponente: peso muito alto negativo (1000) - precisa bloquear
+    opponent_threats = count_threats(board, opponent)
+    score -= opponent_threats * 1000.0
     
     return score
 
