@@ -143,11 +143,70 @@ def alphabeta_player(board: List[List[int]], turn: int, config: Dict) -> int:
 
 def iterative_deepening_player(board: List[List[int]], turn: int, config: Dict) -> int:
     """Jogador usando Iterative Deepening (usa choose_move atual)."""
+    # choose_move já usa Iterative Deepening, mas não retorna stats
+    # Vamos usar uma versão que coleta estatísticas
+    from search import minimax_alphabeta, valid_moves, make_move, order_moves
+    import time
+    
+    max_time_ms = int(config.get("max_time_ms", 2000))
+    max_depth = int(config.get("max_depth", 10))
+    start = time.time()
+    
+    def time_exceeded():
+        return max_time_ms > 0 and (time.time() - start) * 1000.0 >= max_time_ms
+    
+    legal = valid_moves(board)
+    if not legal:
+        return 0
+    
+    stats = {'nodes_visited': 0, 'pruned': 0}
+    best_move = legal[0]
+    best_value = float('-inf')
+    final_depth = 1
+    
+    # Iterative Deepening
+    for current_depth in range(1, max_depth + 1):
+        if time_exceeded():
+            break
+        
+        depth_stats = {'nodes_visited': 0, 'pruned': 0}
+        depth_best_value = float('-inf')
+        depth_best_move = best_move
+        alpha = float('-inf')
+        beta = float('inf')
+        
+        ordered_moves = order_moves(board, legal, turn)
+        for col in ordered_moves:
+            if time_exceeded():
+                break
+            
+            new_board = make_move(board, col, turn)
+            if new_board is not None:
+                value = minimax_alphabeta(new_board, depth=1, max_depth=current_depth, 
+                                        player=turn, is_maximizing=False, 
+                                        alpha=alpha, beta=beta, stats=depth_stats)
+                if value > depth_best_value:
+                    depth_best_value = value
+                    depth_best_move = col
+                alpha = max(alpha, depth_best_value)
+        
+        if not time_exceeded() or current_depth == 1:
+            best_move = depth_best_move
+            best_value = depth_best_value
+            final_depth = current_depth
+            stats['nodes_visited'] += depth_stats['nodes_visited']
+            stats['pruned'] += depth_stats.get('pruned', 0)
+        else:
+            break
+    
     global _last_stats
-    result = choose_move(board, turn, config)
-    # As estatísticas são impressas mas não retornadas, então vamos usar valores padrão
-    _last_stats = {'nodes_visited': 0, 'depth_reached': config.get('max_depth', 5)}
-    return result
+    _last_stats = {
+        'nodes_visited': stats['nodes_visited'],
+        'pruned_nodes': stats.get('pruned', 0),
+        'depth_reached': final_depth
+    }
+    
+    return best_move
 
 def run_experiment(name: str, player1_func, player2_func, 
                   config1: Dict, config2: Dict, num_games: int = 10) -> Dict:
