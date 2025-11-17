@@ -98,7 +98,7 @@ Nossa função heurística \texttt{evaluate()} combina três componentes:
 Realizamos experimentos comparando Minimax com diferentes profundidades (2, 3, 4, 5) contra um jogador aleatório.
 
 % TABELA 1: Minimax vs Aleatório
-\begin{table*}[h]
+\begin{table*}[t]
 \centering
 \caption{Resultados: Minimax vs Aleatório}
 \begin{tabular}{lcccc}
@@ -113,12 +113,15 @@ Profundidade & Taxa Vitória & Tempo Médio (ms) & Estados Visitados \\
 \end{tabular}
 \end{table*}
 
+\clearpage
+
+% Agrupar tabelas 2 e 3 no início da segunda página
 \subsection{Alfa-Beta vs Minimax (sem poda)}
 
 Comparamos a versão com poda Alfa-Beta contra a versão sem poda, mantendo a mesma profundidade.
 
 % TABELA 2: Alfa-Beta vs Minimax
-\begin{table*}[h]
+\begin{table*}[!t]
 \centering
 \caption{Resultados: Alfa-Beta vs Minimax (sem poda)}
 \begin{tabular}{lcccc}
@@ -133,12 +136,14 @@ Profundidade & Taxa Vitória & Tempo Médio (ms) & Estados Visitados \\
 \end{tabular}
 \end{table*}
 
+\vspace{-0.3cm}
+
 \subsection{Iterative Deepening vs Alfa-Beta}
 
 Avaliamos o Iterative Deepening com limites de tempo de 1s e 2s contra Alfa-Beta com profundidade fixa.
 
 % TABELA 3: Iterative Deepening vs Alfa-Beta
-\begin{table*}[h]
+\begin{table*}[!t]
 \centering
 \caption{Resultados: Iterative Deepening vs Alfa-Beta}
 \begin{tabular}{lcccc}
@@ -197,4 +202,3 @@ Este trabalho demonstrou a implementação bem-sucedida de algoritmos de busca a
 % \end{thebibliography}
 
 \end{document}
-
