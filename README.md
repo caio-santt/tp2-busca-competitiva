@@ -25,8 +25,8 @@ Ligue-4 é um jogo de tabuleiro 6×7 onde dois jogadores alternam jogadas, tenta
 
 1. Clone o repositório:
 ```bash
-git clone <url-do-repositorio>
-cd tp2-jogos
+git clone https://github.com/caio-santt/tp2-busca-competitiva.git
+cd tp2-busca-competitiva
 ```
 
 2. Crie e ative um ambiente virtual:
