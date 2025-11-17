@@ -145,6 +145,18 @@ def evaluate(board: List[List[int]], player: int) -> float:
     
     return score
 
+def order_moves(board: List[List[int]], moves: List[int], player: int) -> List[int]:
+    """
+    Ordena as jogadas por heurística simples: colunas centrais primeiro.
+    Isso melhora a eficiência da poda Alfa-Beta.
+    """
+    def move_score(col: int) -> float:
+        # Priorizar coluna central (3), depois colunas adjacentes (2, 4)
+        center_distance = abs(col - 3)
+        return -center_distance  # Menor distância = maior prioridade
+    
+    return sorted(moves, key=move_score, reverse=True)
+
 def minimax(board: List[List[int]], depth: int, max_depth: int, player: int, 
             is_maximizing: bool, stats: Dict) -> float:
     """
@@ -172,15 +184,18 @@ def minimax(board: List[List[int]], depth: int, max_depth: int, player: int,
         else:
             return -evaluate(board, other(player))
     
-    # Obter jogadas válidas
+    # Obter jogadas válidas e ordená-las
     legal_moves = valid_moves(board)
     if not legal_moves:
         return 0.0  # Sem jogadas (empate)
     
+    # Ordenar jogadas: colunas centrais primeiro
+    ordered_moves = order_moves(board, legal_moves, player)
+    
     if is_maximizing:
         # Maximizador: escolhe o maior valor
         max_value = float('-inf')
-        for col in legal_moves:
+        for col in ordered_moves:
             new_board = make_move(board, col, player)
             if new_board is not None:
                 value = minimax(new_board, depth + 1, max_depth, player, False, stats)
@@ -190,7 +205,7 @@ def minimax(board: List[List[int]], depth: int, max_depth: int, player: int,
         # Minimizador: escolhe o menor valor
         min_value = float('inf')
         opponent = other(player)
-        for col in legal_moves:
+        for col in ordered_moves:
             new_board = make_move(board, col, opponent)
             if new_board is not None:
                 value = minimax(new_board, depth + 1, max_depth, player, True, stats)
@@ -226,15 +241,18 @@ def minimax_alphabeta(board: List[List[int]], depth: int, max_depth: int, player
         else:
             return -evaluate(board, other(player))
     
-    # Obter jogadas válidas
+    # Obter jogadas válidas e ordená-las (melhora a poda Alfa-Beta)
     legal_moves = valid_moves(board)
     if not legal_moves:
         return 0.0  # Sem jogadas (empate)
     
+    # Ordenar jogadas: colunas centrais primeiro
+    ordered_moves = order_moves(board, legal_moves, player)
+    
     if is_maximizing:
         # Maximizador: escolhe o maior valor
         max_value = float('-inf')
-        for col in legal_moves:
+        for col in ordered_moves:
             new_board = make_move(board, col, player)
             if new_board is not None:
                 value = minimax_alphabeta(new_board, depth + 1, max_depth, player, 
@@ -251,7 +269,7 @@ def minimax_alphabeta(board: List[List[int]], depth: int, max_depth: int, player
         # Minimizador: escolhe o menor valor
         min_value = float('inf')
         opponent = other(player)
-        for col in legal_moves:
+        for col in ordered_moves:
             new_board = make_move(board, col, opponent)
             if new_board is not None:
                 value = minimax_alphabeta(new_board, depth + 1, max_depth, player, 
@@ -296,30 +314,59 @@ def choose_move(board: List[List[int]], turn: int, config: Dict) -> Tuple[int, D
         # Sem jogadas: devolve 0 por convenção (servidor lida com isso)
         return move
     
-    # Usar Minimax com poda Alfa-Beta para escolher a melhor jogada
+    # Iterative Deepening: explorar profundidades progressivamente
+    # Mantém sempre a melhor jogada conhecida enquanto há tempo
     stats = {'nodes_visited': 0, 'pruned': 0}
-    best_value = float('-inf')
     best_move = legal[0]  # Fallback: primeira jogada válida
+    best_value = float('-inf')
+    final_depth = 1  # Profundidade final atingida
     
-    # Inicializar alpha e beta
-    alpha = float('-inf')
-    beta = float('inf')
-    
-    for col in legal:
-        new_board = make_move(board, col, turn)
-        if new_board is not None:
-            # Avaliar esta jogada com Minimax Alfa-Beta
-            # Começamos com is_maximizing=False porque o próximo turno é do oponente
-            value = minimax_alphabeta(new_board, depth=1, max_depth=max_depth, 
-                                    player=turn, is_maximizing=False, 
-                                    alpha=alpha, beta=beta, stats=stats)
-            
-            if value > best_value:
-                best_value = value
-                best_move = col
-            
-            # Atualizar alpha (melhor valor que o maximizador pode garantir)
-            alpha = max(alpha, best_value)
+    # Iterar sobre profundidades de 1 até max_depth
+    for current_depth in range(1, max_depth + 1):
+        # Verificar se estourou o tempo
+        if time_exceeded():
+            print(f"Tempo esgotado na profundidade {current_depth}")
+            break
+        
+        # Resetar contadores para esta profundidade
+        depth_stats = {'nodes_visited': 0, 'pruned': 0}
+        depth_best_value = float('-inf')
+        depth_best_move = best_move  # Começar com a melhor jogada conhecida
+        
+        # Inicializar alpha e beta
+        alpha = float('-inf')
+        beta = float('inf')
+        
+        # Avaliar cada jogada válida nesta profundidade
+        for col in legal:
+            if time_exceeded():
+                break
+                
+            new_board = make_move(board, col, turn)
+            if new_board is not None:
+                # Avaliar esta jogada com Minimax Alfa-Beta na profundidade atual
+                value = minimax_alphabeta(new_board, depth=1, max_depth=current_depth, 
+                                        player=turn, is_maximizing=False, 
+                                        alpha=alpha, beta=beta, stats=depth_stats)
+                
+                if value > depth_best_value:
+                    depth_best_value = value
+                    depth_best_move = col
+                
+                # Atualizar alpha
+                alpha = max(alpha, depth_best_value)
+        
+        # Se completou esta profundidade, atualizar melhor jogada
+        if not time_exceeded() or current_depth == 1:
+            best_move = depth_best_move
+            best_value = depth_best_value
+            final_depth = current_depth
+            # Acumular estatísticas
+            stats['nodes_visited'] += depth_stats['nodes_visited']
+            stats['pruned'] += depth_stats.get('pruned', 0)
+        else:
+            # Tempo esgotado, usar melhor jogada da profundidade anterior
+            break
     
     move = best_move
     
@@ -327,8 +374,9 @@ def choose_move(board: List[List[int]], turn: int, config: Dict) -> Tuple[int, D
     info = {
         'nodes_visited': stats['nodes_visited'],
         'pruned_nodes': stats.get('pruned', 0),
-        'method': 'minimax_alphabeta',
-        'depth': max_depth
+        'method': 'iterative_deepening',
+        'depth_reached': final_depth,
+        'max_depth': max_depth
     }
     
     return move
