@@ -11,8 +11,9 @@ CORS(app)
 ROWS, COLS = 6, 7
 
 AI_PLAYERS = {
-    "AI_Random" : search.choose_move,
-    "AI_Dummy": search.choose_move_infinity
+    "AI_Minimax": search.choose_move,  # Nossa implementação completa (Minimax + Alfa-Beta + ID)
+    "AI_Random": search.choose_move,  # Mantido para compatibilidade
+    "AI_Dummy": search.choose_move_infinity  # Loop infinito (para testar timeout)
 }
 
 def fallback_move(board):
