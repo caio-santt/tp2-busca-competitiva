@@ -110,6 +110,14 @@ Os experimentos comparam:
 
 Resultados são salvos em `experiment_results.json` e podem ser analisados com `analyze_results.py`.
 
+## 📄 Relatório
+
+O relatório completo do trabalho (formato AAAI, máximo 5 páginas) está disponível no repositório. O relatório inclui:
+- Metodologia detalhada da implementação
+- Análise completa dos resultados experimentais
+- Discussão sobre trade-offs e limitações
+- Conclusões e trabalhos futuros
+
 ## 📝 Licença
 
 Este é um projeto acadêmico desenvolvido para fins educacionais.

@@ -1,107 +1,107 @@
 {
   "experiment_1": {
     "2": {
+      "player1_wins": 20,
+      "player2_wins": 0,
+      "draws": 0,
+      "player1_avg_time": 9.926453784660056,
+      "player2_avg_time": 0.0029413067564672355,
+      "player1_avg_nodes": 54.361111111111114,
+      "player2_avg_nodes": 0.0,
+      "total_games": 20
+    },
+    "3": {
       "player1_wins": 15,
       "player2_wins": 0,
       "draws": 0,
-      "player1_avg_time": 5.5307877528202996,
-      "player2_avg_time": 4.814248154128808,
-      "player1_avg_nodes": 51.857142857142854,
-      "player2_avg_nodes": 52.30434782608695,
+      "player1_avg_time": 61.55709339224774,
+      "player2_avg_time": 0.0034854525611514135,
+      "player1_avg_nodes": 369.1630434782609,
+      "player2_avg_nodes": 0.0,
       "total_games": 15
     },
-    "3": {
+    "4": {
       "player1_wins": 10,
       "player2_wins": 0,
       "draws": 0,
-      "player1_avg_time": 28.388784642805135,
-      "player2_avg_time": 41.60809058409471,
-      "player1_avg_nodes": 376.9824561403509,
-      "player2_avg_nodes": 380.6730769230769,
+      "player1_avg_time": 1794.4265517635622,
+      "player2_avg_time": 0.004682689905166626,
+      "player1_avg_nodes": 2450.1884057971015,
+      "player2_avg_nodes": 0.0,
       "total_games": 10
     },
-    "4": {
+    "5": {
       "player1_wins": 8,
       "player2_wins": 0,
       "draws": 0,
-      "player1_avg_time": 177.86754732546598,
-      "player2_avg_time": 314.5848342350551,
-      "player1_avg_nodes": 2498.5652173913045,
-      "player2_avg_nodes": 2603.2380952380954,
+      "player1_avg_time": 937.7501668601201,
+      "player2_avg_time": 0.004763956423158999,
+      "player1_avg_nodes": 15845.120689655172,
+      "player2_avg_nodes": 0.0,
       "total_games": 8
-    },
-    "5": {
-      "player1_wins": 5,
-      "player2_wins": 0,
-      "draws": 0,
-      "player1_avg_time": 4262.01469451189,
-      "player2_avg_time": -1776.7317541714372,
-      "player1_avg_nodes": 16187.53125,
-      "player2_avg_nodes": 16203.620689655172,
-      "total_games": 5
     }
   },
   "experiment_2": {
     "2": {
+      "player1_wins": 7,
+      "player2_wins": 8,
+      "draws": 0,
+      "player1_avg_time": 4.230205829326923,
+      "player2_avg_time": 7.897232740353315,
+      "player1_avg_nodes": 25.851282051282052,
+      "player2_avg_nodes": 43.184615384615384,
+      "total_games": 15
+    },
+    "3": {
+      "player1_wins": 5,
+      "player2_wins": 5,
+      "draws": 0,
+      "player1_avg_time": 15.470511572701591,
+      "player2_avg_time": 63.72635705130441,
+      "player1_avg_nodes": 108.42857142857143,
+      "player2_avg_nodes": 379.0,
+      "total_games": 10
+    },
+    "4": {
       "player1_wins": 4,
       "player2_wins": 4,
       "draws": 0,
-      "player1_avg_time": 6.462363096383902,
-      "player2_avg_time": 6.253359409478994,
-      "player1_avg_nodes": 35.46153846153846,
-      "player2_avg_nodes": 33.53846153846154,
+      "player1_avg_time": 1531.9806765764952,
+      "player2_avg_time": -1183.3564769476652,
+      "player1_avg_nodes": 366.125,
+      "player2_avg_nodes": 1683.21875,
       "total_games": 8
     },
-    "3": {
-      "player1_wins": 3,
-      "player2_wins": 2,
-      "draws": 0,
-      "player1_avg_time": 36.29891872406006,
-      "player2_avg_time": 51.34714444478353,
-      "player1_avg_nodes": 213.7,
-      "player2_avg_nodes": 270.73333333333335,
-      "total_games": 5
-    },
-    "4": {
-      "player1_wins": 1,
-      "player2_wins": 2,
-      "draws": 0,
-      "player1_avg_time": -1830.9846023718517,
-      "player2_avg_time": 2205.025384823481,
-      "player1_avg_nodes": 790.1875,
-      "player2_avg_nodes": 1231.0625,
-      "total_games": 3
-    },
     "5": {
-      "player1_wins": 1,
-      "player2_wins": 1,
+      "player1_wins": 3,
+      "player2_wins": 3,
       "draws": 0,
-      "player1_avg_time": 6642.1015613219315,
-      "player2_avg_time": -4844.099320471287,
-      "player1_avg_nodes": 6244.823529411765,
-      "player2_avg_nodes": 6164.1875,
-      "total_games": 2
+      "player1_avg_time": -2666.282694749158,
+      "player2_avg_time": 4669.648830336754,
+      "player1_avg_nodes": 1418.3333333333333,
+      "player2_avg_nodes": 10993.121212121212,
+      "total_games": 6
     }
   },
   "experiment_3": {
     "1000": {
       "player1_wins": 7,
-      "player2_wins": 1,
-      "draws": 0,
-      "player1_avg_time": 4203.656458428928,
-      "player2_avg_time": 3783.5246488588664,
-      "player1_avg_nodes": 11139.57142857143,
-      "player2_avg_nodes": 23013.22018348624,
+      "player2_wins": 0,
+      "draws": 1,
+      "player1_avg_time": 6898.873434510342,
+      "player2_avg_time": -3731.75750541687,
+      "player1_avg_nodes": 12137.992248062015,
+      "player2_avg_nodes": 357.536,
       "total_games": 8
     },
     "2000": {
-      "player1_wins": 6,
-      "player2_wins": 2,
+      "player1_wins": 7,
+      "player2_wins": 1,
       "draws": 0,
-      "player1_avg_time": 1103.2768472035725,
-      "player2_avg_time": 3577.21579571565,
-      "player1_avg_nodes": 10324.96,
-      "player2_avg_nodes": 11673.736111111111,
+      "player1_avg_time": 11606.56979149335,
+      "player2_avg_time": -4581.108505075628,
+      "player1_avg_nodes": 36569.75342465754,
+      "player2_avg_nodes": 327.44055944055947,
       "total_games": 8
     }
   }
