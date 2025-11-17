@@ -93,12 +93,11 @@ Nossa função heurística \texttt{evaluate()} combina três componentes:
 
 \section{Experimentos e Resultados}
 
-\subsection{Minimax vs Aleatório}
+\clearpage
 
-Realizamos experimentos comparando Minimax com diferentes profundidades (2, 3, 4, 5) contra um jogador aleatório.
-
+% Todas as três tabelas no início da página 2, uma embaixo da outra
 % TABELA 1: Minimax vs Aleatório
-\begin{table*}[t]
+\begin{table*}[!t]
 \centering
 \caption{Resultados: Minimax vs Aleatório}
 \begin{tabular}{lcccc}
@@ -113,12 +112,7 @@ Profundidade & Taxa Vitória & Tempo Médio (ms) & Estados Visitados \\
 \end{tabular}
 \end{table*}
 
-\clearpage
-
-% Agrupar tabelas 2 e 3 no início da segunda página
-\subsection{Alfa-Beta vs Minimax (sem poda)}
-
-Comparamos a versão com poda Alfa-Beta contra a versão sem poda, mantendo a mesma profundidade.
+\vspace{0.5cm}
 
 % TABELA 2: Alfa-Beta vs Minimax
 \begin{table*}[!t]
@@ -136,11 +130,7 @@ Profundidade & Taxa Vitória & Tempo Médio (ms) & Estados Visitados \\
 \end{tabular}
 \end{table*}
 
-\vspace{-0.3cm}
-
-\subsection{Iterative Deepening vs Alfa-Beta}
-
-Avaliamos o Iterative Deepening com limites de tempo de 1s e 2s contra Alfa-Beta com profundidade fixa.
+\vspace{0.5cm}
 
 % TABELA 3: Iterative Deepening vs Alfa-Beta
 \begin{table*}[!t]
@@ -155,6 +145,21 @@ Limite Tempo & Taxa Vitória & Tempo Médio (ms) & Prof. Média & Estados Visita
 \bottomrule
 \end{tabular}
 \end{table*}
+
+\clearpage
+
+% Texto continua em duas colunas após as tabelas
+\subsection{Minimax vs Aleatório}
+
+Realizamos experimentos comparando Minimax com diferentes profundidades (2, 3, 4, 5) contra um jogador aleatório.
+
+\subsection{Alfa-Beta vs Minimax (sem poda)}
+
+Comparamos a versão com poda Alfa-Beta contra a versão sem poda, mantendo a mesma profundidade.
+
+\subsection{Iterative Deepening vs Alfa-Beta}
+
+Avaliamos o Iterative Deepening com limites de tempo de 1s e 2s contra Alfa-Beta com profundidade fixa.
 
 \subsection{IA vs Jogador Humano}
 
