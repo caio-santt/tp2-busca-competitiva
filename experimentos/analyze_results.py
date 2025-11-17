@@ -3,8 +3,10 @@ Script para analisar os resultados dos experimentos e identificar problemas.
 """
 
 import json
+import os
 
-with open('experiment_results.json', 'r') as f:
+results_file = os.path.join(os.path.dirname(__file__), 'experiment_results.json')
+with open(results_file, 'r') as f:
     results = json.load(f)
 
 print("="*70)

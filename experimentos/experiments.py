@@ -413,7 +413,7 @@ if __name__ == "__main__":
         'experiment_3': exp3_results
     }
     
-    with open('experiment_results.json', 'w') as f:
+    with open(results_file, 'w') as f:
         json.dump(all_results, f, indent=2)
     
     print("\nResultados salvos em 'experiment_results.json'")
