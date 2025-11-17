@@ -145,6 +145,58 @@ def evaluate(board: List[List[int]], player: int) -> float:
     
     return score
 
+def minimax(board: List[List[int]], depth: int, max_depth: int, player: int, 
+            is_maximizing: bool, stats: Dict) -> float:
+    """
+    Algoritmo Minimax com profundidade limitada.
+    
+    Retorna o valor da posição do ponto de vista do jogador maximizador.
+    stats é um dicionário mutável para contar estados visitados.
+    """
+    stats['nodes_visited'] = stats.get('nodes_visited', 0) + 1
+    
+    # Verificar estado terminal
+    is_terminal, winner_player = terminal(board)
+    if is_terminal:
+        if winner_player == player:
+            return float('inf')  # Vitória do jogador
+        elif winner_player == other(player):
+            return float('-inf')  # Derrota do jogador
+        else:
+            return 0.0  # Empate
+    
+    # Se atingiu profundidade máxima, usar heurística
+    if depth >= max_depth:
+        if is_maximizing:
+            return evaluate(board, player)
+        else:
+            return -evaluate(board, other(player))
+    
+    # Obter jogadas válidas
+    legal_moves = valid_moves(board)
+    if not legal_moves:
+        return 0.0  # Sem jogadas (empate)
+    
+    if is_maximizing:
+        # Maximizador: escolhe o maior valor
+        max_value = float('-inf')
+        for col in legal_moves:
+            new_board = make_move(board, col, player)
+            if new_board is not None:
+                value = minimax(new_board, depth + 1, max_depth, player, False, stats)
+                max_value = max(max_value, value)
+        return max_value
+    else:
+        # Minimizador: escolhe o menor valor
+        min_value = float('inf')
+        opponent = other(player)
+        for col in legal_moves:
+            new_board = make_move(board, col, opponent)
+            if new_board is not None:
+                value = minimax(new_board, depth + 1, max_depth, player, True, stats)
+                min_value = min(min_value, value)
+        return min_value
+
 def choose_move(board: List[List[int]], turn: int, config: Dict) -> Tuple[int, Dict]:
     """
     Decide a coluna (0..6) para jogar agora.
@@ -176,9 +228,32 @@ def choose_move(board: List[List[int]], turn: int, config: Dict) -> Tuple[int, D
         # Sem jogadas: devolve 0 por convenção (servidor lida com isso)
         return move
     
-    # VERSÃO INICIAL: escolhe aleatoriamente entre as jogadas legais
-    move = random.choice(legal)
-
+    # Usar Minimax para escolher a melhor jogada
+    stats = {'nodes_visited': 0}
+    best_value = float('-inf')
+    best_move = legal[0]  # Fallback: primeira jogada válida
+    
+    for col in legal:
+        new_board = make_move(board, col, turn)
+        if new_board is not None:
+            # Avaliar esta jogada com Minimax
+            # Começamos com is_maximizing=False porque o próximo turno é do oponente
+            value = minimax(new_board, depth=1, max_depth=max_depth, 
+                          player=turn, is_maximizing=False, stats=stats)
+            
+            if value > best_value:
+                best_value = value
+                best_move = col
+    
+    move = best_move
+    
+    # Retornar informações sobre a busca (útil para experimentos)
+    info = {
+        'nodes_visited': stats['nodes_visited'],
+        'method': 'minimax',
+        'depth': max_depth
+    }
+    
     return move
 
 def choose_move_infinity(board: List[List[int]], turn: int, config: Dict) -> Tuple[int, Dict]:
