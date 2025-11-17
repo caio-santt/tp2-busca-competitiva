@@ -38,6 +38,7 @@ def play_game(player1_func, player2_func, config1: Dict, config2: Dict,
         # Escolher jogada com timeout
         start_time = time.time()
         global _last_stats
+        _last_stats = {}  # Resetar antes de cada jogada para evitar contaminação
         col = 0
         try:
             if turn == P1:
@@ -48,6 +49,8 @@ def play_game(player1_func, player2_func, config1: Dict, config2: Dict,
                 stats['player1_time'].append(elapsed)
                 if 'nodes_visited' in _last_stats:
                     stats['player1_nodes'].append(_last_stats['nodes_visited'])
+                else:
+                    stats['player1_nodes'].append(0)  # Se não houver estatísticas, usar 0
             else:
                 col = player2_func(board, turn, config2)
                 elapsed = (time.time() - start_time) * 1000
@@ -56,6 +59,8 @@ def play_game(player1_func, player2_func, config1: Dict, config2: Dict,
                 stats['player2_time'].append(elapsed)
                 if 'nodes_visited' in _last_stats:
                     stats['player2_nodes'].append(_last_stats['nodes_visited'])
+                else:
+                    stats['player2_nodes'].append(0)  # Se não houver estatísticas, usar 0
         except Exception as e:
             print(f"  ERRO na jogada: {e}")
             # Em caso de erro, escolher primeira jogada válida
@@ -81,6 +86,8 @@ def other(player: int) -> int:
 
 def random_player(board: List[List[int]], turn: int, config: Dict) -> int:
     """Jogador aleatório para comparação."""
+    global _last_stats
+    _last_stats = {'nodes_visited': 0}  # Random não visita nós
     legal = valid_moves(board)
     if not legal:
         return 0
@@ -253,13 +260,23 @@ def run_experiment(name: str, player1_func, player2_func,
         # Alternar quem começa
         if game_num % 2 == 1:
             winner, stats = play_game(player1_func, player2_func, config1, config2, timeout_per_move=15.0)
+            # Estatísticas já estão na ordem correta
+            all_p1_times.extend(stats.get('player1_time', []))
+            all_p2_times.extend(stats.get('player2_time', []))
+            all_p1_nodes.extend(stats.get('player1_nodes', []))
+            all_p2_nodes.extend(stats.get('player2_nodes', []))
         else:
             winner, stats = play_game(player2_func, player1_func, config2, config1, timeout_per_move=15.0)
-            # Inverter resultado
+            # Inverter resultado do jogo
             if winner == P1:
                 winner = P2
             elif winner == P2:
                 winner = P1
+            # Inverter estatísticas também (player1 e player2 foram trocados)
+            all_p1_times.extend(stats.get('player2_time', []))  # player2 do jogo = player1 do experimento
+            all_p2_times.extend(stats.get('player1_time', []))  # player1 do jogo = player2 do experimento
+            all_p1_nodes.extend(stats.get('player2_nodes', []))
+            all_p2_nodes.extend(stats.get('player1_nodes', []))
         
         game_time = time.time() - game_start
         if game_time > 60:  # Se o jogo demorou mais de 1 minuto
@@ -271,11 +288,6 @@ def run_experiment(name: str, player1_func, player2_func,
             results['player2_wins'] += 1
         else:
             results['draws'] += 1
-        
-        all_p1_times.extend(stats.get('player1_time', []))
-        all_p2_times.extend(stats.get('player2_time', []))
-        all_p1_nodes.extend(stats.get('player1_nodes', []))
-        all_p2_nodes.extend(stats.get('player2_nodes', []))
         
         print(f"Vencedor: {winner if winner else 'Empate'}")
     
