@@ -12,6 +12,7 @@
 \usepackage{booktabs}
 \usepackage{multirow}
 \usepackage{url}
+\usepackage{placeins}  % Para \FloatBarrier - controlar posicionamento de floats
 
 \frenchspacing
 \setlength{\pdfpagewidth}{8.5in}
@@ -93,11 +94,12 @@ Nossa função heurística \texttt{evaluate()} combina três componentes:
 
 \section{Experimentos e Resultados}
 
-\clearpage
+\subsection{Minimax vs Aleatório}
 
-% Todas as três tabelas no início da página 2, uma embaixo da outra
-% TABELA 1: Minimax vs Aleatório
-\begin{table*}[!t]
+Realizamos experimentos comparando Minimax com diferentes profundidades (2, 3, 4, 5) contra um jogador aleatório.
+
+% TABELA 1: Minimax vs Aleatório - usando table* para ocupar ambas colunas mas sem invadir
+\begin{table*}[h]
 \centering
 \caption{Resultados: Minimax vs Aleatório}
 \begin{tabular}{lcccc}
@@ -112,10 +114,12 @@ Profundidade & Taxa Vitória & Tempo Médio (ms) & Estados Visitados \\
 \end{tabular}
 \end{table*}
 
-\vspace{0.5cm}
+\subsection{Alfa-Beta vs Minimax (sem poda)}
+
+Comparamos a versão com poda Alfa-Beta contra a versão sem poda, mantendo a mesma profundidade.
 
 % TABELA 2: Alfa-Beta vs Minimax
-\begin{table*}[!t]
+\begin{table*}[h]
 \centering
 \caption{Resultados: Alfa-Beta vs Minimax (sem poda)}
 \begin{tabular}{lcccc}
@@ -130,10 +134,12 @@ Profundidade & Taxa Vitória & Tempo Médio (ms) & Estados Visitados \\
 \end{tabular}
 \end{table*}
 
-\vspace{0.5cm}
+\subsection{Iterative Deepening vs Alfa-Beta}
+
+Avaliamos o Iterative Deepening com limites de tempo de 1s e 2s contra Alfa-Beta com profundidade fixa.
 
 % TABELA 3: Iterative Deepening vs Alfa-Beta
-\begin{table*}[!t]
+\begin{table*}[h]
 \centering
 \caption{Resultados: Iterative Deepening vs Alfa-Beta}
 \begin{tabular}{lcccc}
@@ -145,21 +151,6 @@ Limite Tempo & Taxa Vitória & Tempo Médio (ms) & Prof. Média & Estados Visita
 \bottomrule
 \end{tabular}
 \end{table*}
-
-\clearpage
-
-% Texto continua em duas colunas após as tabelas
-\subsection{Minimax vs Aleatório}
-
-Realizamos experimentos comparando Minimax com diferentes profundidades (2, 3, 4, 5) contra um jogador aleatório.
-
-\subsection{Alfa-Beta vs Minimax (sem poda)}
-
-Comparamos a versão com poda Alfa-Beta contra a versão sem poda, mantendo a mesma profundidade.
-
-\subsection{Iterative Deepening vs Alfa-Beta}
-
-Avaliamos o Iterative Deepening com limites de tempo de 1s e 2s contra Alfa-Beta com profundidade fixa.
 
 \subsection{IA vs Jogador Humano}
 
