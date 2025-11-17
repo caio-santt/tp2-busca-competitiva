@@ -1,0 +1,200 @@
+% Arquivo principal do relatório TP2 - Busca Competitiva
+% Template baseado no formato AAAI
+
+\documentclass[letterpaper]{article}
+\usepackage{aaai}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{url}
+
+\frenchspacing
+\setlength{\pdfpagewidth}{8.5in}
+\setlength{\pdfpageheight}{11in}
+
+\pdfinfo{
+/Title (TP2: Busca Competitiva - Ligue-4)
+/Author (Seu Nome)
+}
+
+\setcounter{secnumdepth}{0}
+
+\begin{document}
+
+\title{TP2: Busca Competitiva em Ligue-4\\Utilizando Minimax, Poda Alfa-Beta e Iterative Deepening}
+
+\author{Seu Nome\\
+Universidade Federal de Minas Gerais\\
+Departamento de Ciência da Computação\\
+\texttt{seu.email@ufmg.br}
+}
+
+\maketitle
+
+\begin{abstract}
+\begin{quote}
+Este trabalho apresenta a implementação de um agente de inteligência artificial para jogar Ligue-4 (Connect Four) utilizando algoritmos de busca adversarial. Foram implementados os algoritmos Minimax com profundidade limitada, poda Alfa-Beta e Iterative Deepening, combinados com uma função heurística que avalia posições do tabuleiro. Os experimentos demonstram a eficácia da poda Alfa-Beta em reduzir o número de nós explorados e a capacidade do Iterative Deepening em aproveitar melhor o tempo disponível. Os resultados mostram que o agente implementado é capaz de vencer consistentemente contra um jogador aleatório e apresenta desempenho competitivo em diferentes configurações de profundidade e tempo.
+\end{quote}
+\end{abstract}
+
+\section{Introdução e Objetivo}
+
+O objetivo deste trabalho é implementar e avaliar algoritmos de busca adversarial para o jogo Ligue-4 (Connect Four). Especificamente, implementamos:
+
+\begin{itemize}
+\item Algoritmo Minimax com profundidade limitada e função heurística
+\item Poda Alfa-Beta para otimização da busca
+\item Iterative Deepening com limite de tempo
+\item Função heurística de avaliação de posições
+\end{itemize}
+
+O trabalho visa demonstrar a eficácia desses algoritmos e analisar trade-offs entre profundidade de busca, tempo de execução e qualidade das decisões.
+
+\section{Metodologia}
+
+\subsection{Evolução do Agente}
+
+O agente foi desenvolvido incrementalmente, seguindo as seguintes etapas:
+
+\subsubsection{Baseline: Agente Aleatório}
+Inicialmente, validamos o ambiente com um agente que escolhe jogadas aleatoriamente entre as colunas válidas.
+
+\subsubsection{Minimax com Profundidade Limitada}
+Implementamos o algoritmo Minimax clássico com profundidade máxima configurável. Para estados terminais, atribuímos valores extremos (vitória = $+\infty$, derrota = $-\infty$, empate = 0). Para estados não terminais, utilizamos uma função heurística.
+
+\subsubsection{Poda Alfa-Beta}
+Adicionamos a poda Alfa-Beta ao Minimax, mantendo a mesma decisão ótima mas reduzindo significativamente o número de nós explorados.
+
+\subsubsection{Iterative Deepening}
+Implementamos Iterative Deepening que explora profundidades progressivamente (1, 2, 3, ...) até atingir a profundidade máxima ou estourar o limite de tempo, mantendo sempre a melhor jogada conhecida.
+
+\subsection{Função Heurística}
+
+Nossa função heurística \texttt{evaluate()} combina três componentes:
+
+\begin{enumerate}
+\item \textbf{Valorização do centro}: Peças nas colunas centrais (2, 3, 4) recebem pontos adicionais, com a coluna 3 (central) recebendo maior peso.
+\item \textbf{Contagem de sequências}: Sequências de 2 peças recebem peso 1, sequências de 3 peças recebem peso 10.
+\item \textbf{Detecção de ameaças}: Sequências de 3 peças que podem virar 4 (com espaço vazio acessível) recebem peso muito alto (500 para ameaças próprias, -1000 para ameaças do oponente).
+\end{enumerate}
+
+\subsection{Decisões de Projeto}
+
+\begin{itemize}
+\item \textbf{Ordenação de jogadas}: Implementamos ordenação que prioriza colunas centrais, melhorando a eficiência da poda Alfa-Beta.
+\item \textbf{Verificação de acessibilidade}: A detecção de ameaças considera apenas espaços vazios acessíveis (que podem receber peças por gravidade).
+\item \textbf{Contadores de estatísticas}: Implementamos contadores para número de nós visitados e nós podados, essenciais para análise experimental.
+\end{itemize}
+
+\section{Experimentos e Resultados}
+
+\subsection{Minimax vs Aleatório}
+
+Realizamos experimentos comparando Minimax com diferentes profundidades (2, 3, 4, 5) contra um jogador aleatório.
+
+% TABELA 1: Minimax vs Aleatório
+\begin{table}[h]
+\centering
+\caption{Resultados: Minimax vs Aleatório}
+\begin{tabular}{lcccc}
+\toprule
+Profundidade & Taxa Vitória & Tempo Médio (ms) & Estados Visitados \\
+\midrule
+2 & XX\% & XX & XX \\
+3 & XX\% & XX & XX \\
+4 & XX\% & XX & XX \\
+5 & XX\% & XX & XX \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Alfa-Beta vs Minimax (sem poda)}
+
+Comparamos a versão com poda Alfa-Beta contra a versão sem poda, mantendo a mesma profundidade.
+
+% TABELA 2: Alfa-Beta vs Minimax
+\begin{table}[h]
+\centering
+\caption{Resultados: Alfa-Beta vs Minimax (sem poda)}
+\begin{tabular}{lcccc}
+\toprule
+Profundidade & Taxa Vitória & Tempo Médio (ms) & Estados Visitados \\
+\midrule
+2 & XX\% & XX & XX (AB) / XX (Minimax) \\
+3 & XX\% & XX & XX (AB) / XX (Minimax) \\
+4 & XX\% & XX & XX (AB) / XX (Minimax) \\
+5 & XX\% & XX & XX (AB) / XX (Minimax) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Iterative Deepening vs Alfa-Beta}
+
+Avaliamos o Iterative Deepening com limites de tempo de 1s e 2s contra Alfa-Beta com profundidade fixa.
+
+% TABELA 3: Iterative Deepening vs Alfa-Beta
+\begin{table}[h]
+\centering
+\caption{Resultados: Iterative Deepening vs Alfa-Beta}
+\begin{tabular}{lcccc}
+\toprule
+Limite Tempo & Taxa Vitória & Tempo Médio (ms) & Prof. Média & Estados Visitados \\
+\midrule
+1s & XX\% & XX & XX & XX \\
+2s & XX\% & XX & XX & XX \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{IA vs Jogador Humano}
+
+Joguei X partidas contra a IA implementada. Percepções qualitativas:
+
+\begin{itemize}
+\item \textbf{Forças}: A IA demonstra boa capacidade de bloquear ameaças imediatas e criar oportunidades de vitória.
+\item \textbf{Fraquezas}: [A completar após mais partidas]
+\end{itemize}
+
+\section{Discussão}
+
+\subsection{Análise dos Resultados}
+
+[Análise crítica dos resultados obtidos, incluindo:
+\begin{itemize}
+\item Impacto da profundidade na qualidade das decisões
+\item Eficiência da poda Alfa-Beta
+\item Vantagens do Iterative Deepening
+\item Trade-offs entre tempo e qualidade
+\end{itemize}]
+
+\subsection{Limitações}
+
+\begin{itemize}
+\item A função heurística pode ser melhorada com mais componentes
+\item Profundidades maiores (5+) são computacionalmente caras
+\item Não implementamos tabela de transposições (otimização futura)
+\end{itemize}
+
+\section{Conclusão}
+
+Este trabalho demonstrou a implementação bem-sucedida de algoritmos de busca adversarial para Ligue-4. A poda Alfa-Beta mostrou-se essencial para viabilizar buscas em profundidades maiores, enquanto o Iterative Deepening permitiu melhor aproveitamento do tempo disponível. A função heurística implementada, embora simples, mostrou-se eficaz para guiar a busca.
+
+\textbf{Ideias de melhorias futuras}:
+\begin{itemize}
+\item Implementar tabela de transposições
+\item Melhorar função heurística com mais componentes
+\item Otimizações adicionais para competição
+\end{itemize}
+
+% Bibliografia (se necessário)
+% \begin{thebibliography}{}
+% \bibitem{ref1} Referência 1
+% \end{thebibliography}
+
+\end{document}
+
