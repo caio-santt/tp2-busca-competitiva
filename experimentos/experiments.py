@@ -6,6 +6,10 @@ Coleta métricas conforme especificado nas instruções do TP2.
 import time
 import random
 from typing import List, Tuple, Dict
+import sys
+import os
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from search import (
     choose_move, valid_moves, make_move, terminal, winner, 
     EMPTY, P1, P2, ROWS, COLS, copy_board
@@ -400,7 +404,8 @@ if __name__ == "__main__":
     print("TODOS OS EXPERIMENTOS CONCLUÍDOS")
     print("="*60)
     
-    # Salvar resultados em arquivo (opcional)
+    # Salvar resultados em arquivo
+    results_file = os.path.join(os.path.dirname(__file__), 'experiment_results.json')
     import json
     all_results = {
         'experiment_1': exp1_results,

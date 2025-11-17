@@ -59,6 +59,10 @@ tp2-jogos/
 ├── requirements.txt   # Dependências Python
 ├── static/           # Arquivos estáticos (CSS, JS)
 ├── templates/        # Templates HTML
+├── experimentos/     # Scripts e resultados de experimentos
+│   ├── experiments.py
+│   ├── analyze_results.py
+│   └── experiment_results.json
 └── README.md         # Este arquivo
 ```
 
@@ -92,7 +96,19 @@ def choose_move(board: List[List[int]], turn: int, config: Dict) -> Tuple[int, D
 
 ## 📊 Experimentos
 
-O projeto inclui experimentos comparativos entre diferentes algoritmos e configurações, documentados no relatório final.
+O projeto inclui experimentos comparativos entre diferentes algoritmos e configurações. Os scripts de experimentação estão na pasta `experimentos/`:
+
+```bash
+cd experimentos
+python experiments.py
+```
+
+Os experimentos comparam:
+- **Minimax vs Aleatório**: Avalia a eficácia do Minimax em diferentes profundidades
+- **Alfa-Beta vs Minimax**: Compara a eficiência da poda Alfa-Beta
+- **Iterative Deepening vs Alfa-Beta**: Avalia o aproveitamento de tempo com ID
+
+Resultados são salvos em `experiment_results.json` e podem ser analisados com `analyze_results.py`.
 
 ## 📝 Licença
 
@@ -104,4 +120,13 @@ Desenvolvido como parte do TP2 da disciplina de Inteligência Artificial.
 
 ---
 
-**Status**: Em desenvolvimento 🚧
+**Status**: ✅ Implementação completa
+
+### Implementações Realizadas
+
+- ✅ Minimax com profundidade limitada
+- ✅ Poda Alfa-Beta
+- ✅ Iterative Deepening com limite de tempo
+- ✅ Função heurística com detecção de ameaças
+- ✅ Ordenação de jogadas para otimização
+- ✅ Scripts de experimentação automatizados
